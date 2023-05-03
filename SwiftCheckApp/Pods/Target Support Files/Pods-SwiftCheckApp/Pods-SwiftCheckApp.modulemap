@@ -1,0 +1,6 @@
+framework module Pods_SwiftCheckApp {
+  umbrella header "Pods-SwiftCheckApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

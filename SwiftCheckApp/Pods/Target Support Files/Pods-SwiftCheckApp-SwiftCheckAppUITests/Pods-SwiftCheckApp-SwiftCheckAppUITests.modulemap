@@ -1,0 +1,6 @@
+framework module Pods_SwiftCheckApp_SwiftCheckAppUITests {
+  umbrella header "Pods-SwiftCheckApp-SwiftCheckAppUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
