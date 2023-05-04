@@ -11,6 +11,9 @@ import Swift
 import SwiftSyntax
 import SwiftSyntaxParser
 
+import Cocoa
+import SwiftSyntax
+
 struct Function {
     let name: String
     let parameters: String
@@ -385,3 +388,50 @@ class ViewController: NSViewController {
 //        }
 //    }
 
+
+class MySyntaxVisitor: SyntaxVisitor {
+    let diagnosticEngine: DiagnosticEngine
+    
+    init(diagnosticEngine: DiagnosticEngine) {
+        self.diagnosticEngine = diagnosticEngine
+    }
+    
+    override func visit(_ node: Syntax) {
+        // Check for build errors here and add diagnostic messages to the diagnostic engine
+        if let tokenNode = node as? TokenSyntax {
+            if tokenNode.tokenKind == .unknown {
+                diagnosticEngine.diagnose(.init(
+                    severity: .error,
+                    location: .init(file: tokenNode.sourceLocation.file,
+                                    line: tokenNode.sourceLocation.line),
+                    message: "Unexpected token: '\(tokenNode.text)'"))
+            }
+        }
+        // Continue traversal
+        super.visit(node)
+    }
+}
+
+class DiagnosticEngine {
+    var diagnostics: [Diagnostic] = []
+    
+    func diagnose(_ diagnostic: Diagnostic) {
+        diagnostics.append(diagnostic)
+    }
+}
+
+struct Diagnostic: CustomStringConvertible {
+    let severity: DiagnosticSeverity
+    let location: SourceLocation
+    let message: String
+    
+    var description: String {
+        return "\(severity.rawValue) \(location): error: \(message)"
+    }
+}
+
+enum DiagnosticSeverity: String {
+    case error
+    case warning
+    case note
+}
